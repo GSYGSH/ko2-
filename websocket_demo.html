@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="connect">连接</button>
+    <button id="send" disabled='true'>发送数据</button>
+    <br>
+    接收数据如下:
+    <br>
+    <span id="recv"></span>
+    <!-- 
+        const Websocket = require('ws')
+        const wss = new Websocket.Server({
+            port:9998
+        })
+        wss.on('connection', client => {
+            client.on('message', msg => {
+                console.log('客户端发送的数据:' + `${msg}`);
+            })
+            /* 服务端往客户端发送数据 */
+            client.send('hello')
+        })
+
+     -->
+    <script>
+        let connect = document.querySelector('#connect')
+        let send = document.querySelector('#send')
+        let recv = document.querySelector('#recv')
+        let ws = null
+        connect.onclick = function(){
+            ws = new WebSocket('ws://localhost:9998')
+            ws.onopen = ()=>{
+                console.log('连接成功');
+                send.disabled = false
+            }
+            ws.onclose = ()=>{
+                console.log('连接失败');
+                send.disabled = true
+            }
+            ws.onmessage = (msg)=>{
+                console.log('接收到 服务端 发送的数据');
+                console.log(msg);
+                recv.innerHTML = msg.data
+            }
+        }
+        send.onclick = function(){
+            ws.send(JSON.stringify({
+                action:"fullScreen",
+                socketType:'trendData',
+                chartName:'trend',
+                value:true
+            }))
+        }
+    </script>
+</body>
+</html>
